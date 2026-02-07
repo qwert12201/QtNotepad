@@ -1,0 +1,8 @@
+.git/
+__pycache__/
+*.spec
+*.ui
+env/
+_.swp
+pwd.py
+test/

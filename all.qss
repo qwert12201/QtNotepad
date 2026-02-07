@@ -1,0 +1,136 @@
+QScrollBar:vertical {
+    background-color: #a2a2a2;
+    width: 13px;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: transparent;
+}
+
+QScrollBar::handle:vertical {
+    border-radius: 3px;
+    background-color: #222222;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #737373;
+}
+
+QDialog {
+    background-color: #3a3a3a;
+}
+
+QLabel::disabled {
+    color: black;
+}
+
+QLabel {
+    font-size: 9pt;
+    color: white;
+}
+
+QLineEdit {
+    color: white;
+    background: #222222;
+}
+
+QPushButton::disabled {
+    background-color: #3d3d3d;
+    opacity: 0.5;
+    color: gray;
+}
+
+QCheckBox {
+    color: black;
+}
+
+QCheckBox::hover {
+    border: 1.5px solid white;
+    color: white;
+    border-radius: 5px;
+}
+
+QCheckBox::checked {
+    color: white;
+}
+
+QPushButton {
+    min-width: 40px;
+    min-height: 16px;
+    padding: 2px 15px;
+    background-color: black;
+    border: 1.5px solid white;
+    border-radius: 5px;
+    color: white;
+}
+
+QPushButton::hover {
+    background-color: white;
+    border: none;
+    color: black;
+}
+
+QPushButton::pressed {
+    background-color: gray;
+    border-radius: 5px;
+    color: white;
+}
+
+QMenuBar {
+    background-color: black;
+    color: white;
+}
+
+QMenuBar::item {
+    padding: 1px 7px;
+    margin: 1px 2px;
+    border-radius: 1px;
+}
+
+QMenuBar::item:selected {
+    background-color: white;
+    border-radius: 3px;
+    color: black;
+}
+
+QTextEdit {
+    color: white;
+}
+
+QMenuBar::item:pressed {
+    background-color: gray;
+    border-radius: 3px;
+    color: white;
+}
+
+QMenu {
+    background-color: black;
+    color: white;
+}
+
+QMenu::item {
+    padding: 3px;
+    margin: 2px;
+}
+
+QMenu::separator {
+    background: white;
+    height: 0.5px;
+    margin: 3px;
+}
+
+QMenu::item:selected {
+    background-color: white;
+    border-radius: 2px;
+    color: black;
+}
+
+QMenu::item:pressed {
+    background-color: gray;
+    border-radius: 3px;
+    color: white;
+}
