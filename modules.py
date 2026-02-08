@@ -1,9 +1,11 @@
 import os
 import shutil
+import json
 
 def future():
     os.system("pyuic6 designes_ui/design.ui -o designes_py/design.py")
     os.system("pyuic6 designes_ui/findText.ui -o designes_py/findText.py")
+    os.system("pyuic6 designes_ui/settingsWindow.ui -o designes_py/settingsWindow.py")
     dir_list = os.listdir()
     if "test" in dir_list:
         shutil.rmtree("test")
@@ -46,6 +48,35 @@ def parse_qss(name: str) -> str:
     result = result[:-2]
     return result
 
+def generate_basic_settings():
+    settings = {
+        "File-numeration": False,
+        "StatusBar-info": True,
+        "Confirmation": True,
+        "QSS-styles": True,
+    }
+    return settings
+
+def updateFileConfig(settings: dict[str, bool]):
+    with open("settings.json", "w", encoding="utf-8") as f:
+        json.dump(settings, f, ensure_ascii=False, indent=4)
+
+def get_settings() -> dict[str, bool] | None:
+    try:
+        with open("settings.json", "r", encoding="utf-8") as f:
+            settings = json.load(f)
+            return settings
+    except FileNotFoundError:
+        return None
+
+def multiply_parser(*names) -> str:
+    result = ""
+    for name in names:
+        result += parse_qss(name)
+        result += "\n\n"
+    return result[:-2]
+
 
 if __name__ == "__main__":
+    print(updateFileConfig(generate_basic_settings()))
     pass
