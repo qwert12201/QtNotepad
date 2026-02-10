@@ -4,5 +4,4 @@ __pycache__/
 *.ui
 env/
 _.swp
-pwd.py
-test/
+build/

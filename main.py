@@ -1,337 +1,11 @@
 import sys
-import webbrowser
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
-from modules import *
+from designes_py.modules import *
 from designes_py.design import Ui_MainWindow
-from designes_py.findText import Ui_Dialog as FindDialog
-from designes_py.settingsWindow import Ui_Dialog as SettingsDialog
-
-class SettingsWindow(QtWidgets.QDialog):
-    changed = QtCore.pyqtSignal()
-    settings_changed = QtCore.pyqtSignal()
-
-    def __init__(self, version: str):
-        super().__init__()
-        self.ui = SettingsDialog()
-        self.ui.setupUi(self)
-        self.setFixedSize(self.size())
-        self.show()
-        self._changed = False
-        self._save_seconds = 0
-        self._clear_seconds = 0
-
-        self.ui.label_2.setText(f"Version: {version}")
-        self.settings = ""
-        self.updateSettings()
-
-        self.settings_template = {
-            "File-numeration": self.ui.numerationBox,
-            "StatusBar-info": self.ui.statusBarBox,
-            "Confirmation": self.ui.backupFileBox,
-            "QSS-styles": self.ui.qssStyleBox,
-        }
-        self.checkSettings()
-        self.updateVisualConfig()
-        for box in self.settings_template.values():
-            box.checkStateChanged.connect(self.change)
-
-        self.ui.exitButton.clicked.connect(self.exit)
-        self.ui.resetButton.clicked.connect(self.generateBasicSettings)
-        self.ui.importButton.clicked.connect(self.importSettings)
-        self.ui.applyButton.clicked.connect(self.applyChanges)
-
-        self.ui.checkGithubButton.clicked.connect(lambda: webbrowser.open("https://github.com/qwert12201/QtNotepad", 2))
-
-        self.changed.connect(self.checkSettings)
-        self.ui.autoSaveBox.checkStateChanged.connect(lambda: self.ui.label.setEnabled(self.ui.autoSaveBox.isChecked()))
-        self.ui.autoSaveBox.checkStateChanged.connect(lambda: self.ui.lineEdit.setEnabled(self.ui.autoSaveBox.isChecked()))
-        self.ui.autoSaveBox.checkStateChanged.connect(self.ui.lineEdit.clear)
-
-        self.ui.clearBox.checkStateChanged.connect(lambda: self.ui.label_4.setEnabled(self.ui.clearBox.isChecked()))
-        self.ui.clearBox.checkStateChanged.connect(lambda: self.ui.lineEdit_2.setEnabled(self.ui.clearBox.isChecked()))
-        self.ui.clearBox.checkStateChanged.connect(self.ui.lineEdit_2.clear)
-
-    def updateSettings(self):
-        settings = get_settings()
-        if not settings:
-            settings = generate_basic_settings()
-            updateFileConfig()
-        self.settings = settings
-
-    def change(self):
-        self._changed = True
-
-    def saveChanges(self) -> int:  # -1 - leave without save, 0 - not leave, 1 - leave with save
-        self.updateSettings()
-        if not self.settings["Confirmation"]:
-            return -1
-        elif self._changed:
-            choice = QtWidgets.QMessageBox.question(self, "Warning", "Do you want to save the changes?", QtWidgets.QMessageBox.StandardButton.Save | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel, QtWidgets.QMessageBox.StandardButton.Save)
-            if choice == QtWidgets.QMessageBox.StandardButton.Save:
-                self.applyChanges()
-                return 1
-            elif choice == QtWidgets.QMessageBox.StandardButton.Cancel:
-                return 0
-            elif choice == QtWidgets.QMessageBox.StandardButton.No:
-                return -1
-
-    def getSeconds(self):
-        a = self.ui.lineEdit.text()
-        b = self.ui.lineEdit_2.text()
-        if self.ui.lineEdit.isEnabled():
-            if a.isdigit() and int(a) != 0:
-                self._save_seconds = int(a)
-            else:
-                QtWidgets.QMessageBox.warning(self, "Seconds", "Seconds aren't correctly")
-                self._save_seconds = 0
-
-        if self.ui.lineEdit_2.isEnabled():
-            if b.isdigit() and int(b) != 0:
-                self._clear_seconds = int(b)
-            else:
-                QtWidgets.QMessageBox.warning(self, "Seconds", "Seconds aren't correctly")
-                self._clear_seconds = 0
-
-    def closeEvent(self, a0):
-        code = self.saveChanges()
-        if code != 0:
-            return super().closeEvent(a0)
-        a0.ignore()
-
-    def generateBasicSettings(self):
-        self.settings = generate_basic_settings()
-        updateFileConfig(self.settings)
-        self.updateVisualConfig()
-        self.ui.autoSaveBox.setChecked(False)
-        self.ui.numerationBox.setChecked(False)
-        self.ui.clearBox.setChecked(False)
-        self.changed.emit()
-
-    def importSettings(self):
-        file, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", filter="*.json")
-        if file:
-            try:
-                with open(file, "r", encoding="utf-8") as f:
-                    settings = dict(json.load(f))
-                    if settings.keys() != self.settings_template.keys():
-                        QtWidgets.QMessageBox.critical(self, "Settings", "Settings written incorrectly!")
-                        return
-                    choice = QtWidgets.QMessageBox.warning(self, "Confirm", "Do you confirm rewriting settings.json file?", QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.Cancel)
-                    if choice == QtWidgets.QMessageBox.StandardButton.Cancel:
-                        return
-                    self.settings = settings
-                    updateFileConfig(self.settings)
-                    self.updateVisualConfig()
-                    self.changed.emit()
-                    self.settings_changed.emit()
-            except json.JSONDecodeError:
-                QtWidgets.QMessageBox.critical(self, "Settings", "Settings in file isn't correctly!")
-                return
-
-    def applyChanges(self):
-        if self.settings.get("Confirmation"):
-            choice = QtWidgets.QMessageBox.warning(self, "Confirm", "Do you confirm rewriting settings.json file?", QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.Cancel)
-            if choice == QtWidgets.QMessageBox.StandardButton.Cancel:
-                return
-        temp = {key: widget.isChecked() for key, widget in self.settings_template.items()}
-        self.getSeconds()
-        if self.ui.clearBox.isChecked() and self._clear_seconds:
-            temp["Self-clear"] = True
-            temp["Clear_seconds"] = self._clear_seconds
-        if self.ui.autoSaveBox.isChecked() and self._save_seconds:
-            temp["Auto-save"] = True
-            temp["Save_seconds"] = self._save_seconds
-        self.settings = temp
-        updateFileConfig(temp)
-        self.updateVisualConfig()
-        self.settings_changed.emit()
-        self._changed = False
-
-    def updateVisualConfig(self):
-        settings = get_settings()
-        result = "{\n"
-        if settings:
-            for key, value in settings.items():
-                result += f"{' ' * 4}{key}: {value},\n"
-            result += "}"
-            self.ui.textEdit.setText(result)
-        else:
-            self.ui.textEdit.setText("File not found!")
-
-    def checkSettings(self):
-        for key, widget in self.settings_template.items():
-            is_true = self.settings[key]
-            widget.setChecked(is_true)
-        if self.settings.get("Auto-save"):
-            self.ui.autoSaveBox.setChecked(True)
-        if self.settings.get("Save_seconds"):
-            self.ui.label.setEnabled(True)
-            self.ui.lineEdit.setEnabled(True)
-            self.ui.lineEdit.setText(str(self.settings["Save_seconds"]))
-        if self.settings.get("Self-clear"):
-            self.ui.clearBox.setChecked(True)
-        if self.settings.get("Clear_seconds"):
-            self.ui.label_4.setEnabled(True)
-            self.ui.lineEdit_2.setEnabled(True)
-            self.ui.lineEdit_2.setText(str(self.settings["Clear_seconds"]))
-
-    def exit(self):
-        self.destroy(True)
-
-class FindWindow(QtWidgets.QDialog):
-    replace = QtCore.pyqtSignal()
-    new_text = QtCore.pyqtSignal()
-
-    def __init__(self, formatted_strings: list[str]):
-        super().__init__()
-        self.ui = FindDialog()
-        self.ui.setupUi(self)
-        self.setFixedSize(self.size())
-        self.strings = formatted_strings
-        self.buffer = []
-        self.line_buffer = []
-        self.index = 0
-        self.to_find = ""
-        self.replace_with = ""
-        self.show()
-
-        self.info_widgets = [
-            self.ui.info1Label, self.ui.info2Label, self.ui.info3Label,
-        ]
-
-        self.ui.replaceModeButton.clicked.connect(self.changeMode)
-        self.ui.showInfoBox.checkStateChanged.connect(self.activateInfoLabels)
-        self.ui.searchButton.clicked.connect(self.handleControlButton)
-        self.ui.saveMatchesButton.clicked.connect(self.saveMatches)
-        self.ui.exitButton.clicked.connect(self.exit)
-        self.ui.clearButton.clicked.connect(self.clearSearch)
-        self.ui.resetReplaceButton.clicked.connect(lambda: self.ui.resetReplaceButton.setEnabled(False))
-
-    def exit(self):
-        self.destroy(True)
-
-    def replaceStrings(self, new_lines: list[str]):
-        self.strings = new_lines
-
-    def changeMode(self):
-        if not self.to_find:
-            QtWidgets.QMessageBox.critical(self, "Error", "You haven't searched any line!")
-            return
-        self.ui.saveMatchesButton.setEnabled(False)
-        self.ui.searchButton.setText("Replace")
-        self.ui.label_2.setText("Replace:")
-        self.ui.previousButton.setEnabled(False)
-        self.ui.nextButton.setEnabled(False)
-        self.ui.lineEdit.clear()
-        self.ui.lineEdit.setReadOnly(False)
-        self.ui.replaceModeButton.setEnabled(False)
-        self.ui.searchButton.setEnabled(True)
-
-    def clearSearch(self):
-        self.ui.lineEdit.clear()
-        self.ui.showInfoBox.setEnabled(True)
-        self.ui.showInfoBox.setChecked(False)
-        self.ui.lineEdit.setReadOnly(False)
-        self.ui.label_2.setText("Find:")
-        self.ui.info1Label.setText("Line to find: ")
-        self.ui.info2Label.setText("Total lines: ")
-        self.ui.info3Label.setText("Matches total: ")
-        self.buffer.clear()
-        self.line_buffer.clear()
-        self.index = 0
-        self.ui.nextButton.setEnabled(False)
-        self.ui.previousButton.setEnabled(False)
-        self.ui.saveMatchesButton.setEnabled(False)
-        self.ui.replaceModeButton.setEnabled(False)
-        self.ui.searchButton.setEnabled(True)
-        self.ui.resetReplaceButton.setEnabled(False)
-        self.ui.searchButton.setText("Search")
-        self.new_text.emit()
-
-    def activateInfoLabels(self):
-        for widget in self.info_widgets:
-            widget.setEnabled(self.ui.showInfoBox.isChecked())
-
-    def updateInfo(self, to_find: str, total_lines: int, matches: int):
-        info_labels_is_active = self.ui.info1Label.isEnabled()
-        if info_labels_is_active:
-            self.ui.info1Label.setText(f'Line to find: "{to_find}"')
-            self.ui.info2Label.setText(f"Total lines: {total_lines}")
-            self.ui.info3Label.setText(f"Matches total: {matches}")
-
-    def search(self):
-        to_find = self.ui.lineEdit.text().strip().lower()
-        if not to_find:
-            QtWidgets.QMessageBox.warning(self, "Warning", "You haven't written any letters")
-            return
-        self.to_find = to_find
-        matches, total_lines, temp = 0, 0, 0
-        letters_iterated = 0
-        for line in self.strings:
-            line = line.strip().lower()
-            total_lines += 1
-            if to_find in line:
-                temp2 = 0
-                while True:
-                    temp = line.find(to_find, temp2)
-                    if temp == -1:
-                        break
-                    temp2 = temp + 1
-                    abs_pos = temp2 + letters_iterated - 1
-                    res = (abs_pos, abs_pos + len(to_find))
-                    self.buffer.append(res)
-                    matches += 1
-                self.line_buffer.append(line)
-            letters_iterated += len(line) + 1
-        self.updateInfo(to_find, total_lines, matches)
-
-    def searchButton(self):
-        self.search()
-        if self.buffer or self.line_buffer:
-            self.ui.lineEdit.setText("Found!")
-            self.ui.previousButton.setEnabled(False)
-            self.ui.nextButton.setEnabled(True)
-            self.ui.saveMatchesButton.setEnabled(True)
-            self.ui.replaceModeButton.setEnabled(True)
-            self.ui.showInfoBox.setEnabled(False)
-        else:
-            self.ui.lineEdit.setText("Not found!")
-        self.ui.lineEdit.setReadOnly(True)
-
-    def replaceButton(self):
-        self.replace_with = self.ui.lineEdit.text().strip().lower()
-        if not self.replace_with:
-            QtWidgets.QMessageBox.warning(self, "Warning", "You haven't written any letters!")
-            return
-        self.replace.emit()
-        self.ui.lineEdit.setReadOnly(True)
-        self.ui.resetReplaceButton.setEnabled(True)
-
-    def handleControlButton(self):
-        button_text = self.ui.searchButton.text()
-        if button_text == "Search":
-            self.searchButton()
-        elif button_text == "Replace":
-            self.replaceButton()
-        self.ui.searchButton.setEnabled(False)
-
-    def saveMatches(self):
-        if not self.buffer:
-            QtWidgets.QMessageBox.warning(self, "Warning", "You have to search something to save")
-            return
-        file, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save file")
-        if not file:
-            return
-        try:
-            with open(file, "w", encoding="utf-8") as f:
-                for line in self.line_buffer:
-                    f.write(line + "\n")
-                QtWidgets.QMessageBox.information(self, "Writing", "Matches were saved!")
-        except PermissionError:
-            QtWidgets.QMessageBox.critical(self, "Fail", "You don't have permissions to write in file!")
-            return
+from designes_py.findText import FindWindow
+from designes_py.settingsWindow import SettingsWindow
 
 class MainWindow(QtWidgets.QMainWindow):
     closed = QtCore.pyqtSignal()
@@ -344,12 +18,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.textEdit.clear()
         self.version = "1.15"
         self.settings = {}
-        self._save_seconds = 0
-        self._clear_seconds = 0
 
         self.updateSettings()
         self.ui.statusBar.setVisible(self.settings["StatusBar-info"])
         self._numeration = self.settings["File-numeration"]
+        self._save_seconds = self.settings["Save_seconds"]
+        self._clear_seconds = self.settings["Clear_seconds"]
 
         # styles
         self.changeStyleMode(self.settings["QSS-styles"])
@@ -389,15 +63,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer_2.timeout.connect(lambda: self.timer_2.start())
         self.timer_2.timeout.connect(self.clearTextEdit)
 
-        if self.settings.get("Save_seconds"):
-            self._save_seconds = self.settings.get("Save_seconds")
-            self.timer.setInterval(self._save_seconds * 1000)
-            self.timer.start()
-
-        if self.settings.get("Clear_seconds"):
-            self._clear_seconds = self.settings.get("Clear_seconds")
-            self.timer_2.setInterval(self._clear_seconds * 1000)
-            self.timer_2.start()
+        self.setTimers()
         self.ui.textEdit.cursorPositionChanged.connect(self.changeStatusBar)
 
         # menuFile
@@ -419,7 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
             widget.triggered.connect(lambda _, fmt=format: self.formatingString(fmt))
 
         for action, weight in self.weight_table.items():
-            action.triggered.connect(lambda _, w=weight: self.changeWeight(w))
+            action.triggered.connect(lambda _, w=weight: self.ui.textEdit.setFontWeight(w))
         self.ui.actionResetStyle.triggered.connect(self.resetStyles)
 
         # contextMenu
@@ -460,6 +126,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Settings
         self.ui.actionMenu.triggered.connect(self.createSettingsWindow)
+        self.ui.actionReset_settings.triggered.connect(lambda: updateFileConfig(generate_basic_settings()))
 
     def exit(self) -> int:
         code = self.saveChanges()
@@ -475,15 +142,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def changeStatusBar(self):
         self.updateSettings()
         setting = self.settings["StatusBar-info"]
+        self.ui.statusBar.setVisible(setting)
         if setting:
-            self.ui.statusBar.show()
             cursor = self.ui.textEdit.textCursor()
             first = cursor.position()
             second = cursor.columnNumber()
             third = cursor.blockNumber()
             self.ui.statusBar.showMessage(f"Current cursor position: {first}, line: {third}, column: {second}")
-        else:
-            self.ui.statusBar.hide()
 
     def showContextMenuEvent(self, pos):
         self.context_menu.exec(self.ui.textEdit.viewport().mapToGlobal(pos))
@@ -568,16 +233,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._fileSaver()
         self._writeLines()
 
-    def color(self, clr):
+    def color(self, clr: str):
         text_cursor = self.ui.textEdit.textCursor()
         temp_clr = QtGui.QColor(clr)
         if not self.ui.textEdit.toPlainText():
             return
         self.ui.textEdit.setTextColor(temp_clr)
         text_cursor.clearSelection()
-
-    def changeWeight(self, value: int):
-        self.ui.textEdit.setFontWeight(value)
 
     def formatingString(self, tformat_action: str):
         text_cursor = self.ui.textEdit.textCursor()
@@ -618,7 +280,7 @@ class MainWindow(QtWidgets.QMainWindow):
         temp.setFontUnderline(False)
         text_cursor.setCharFormat(temp)
 
-    def replaceText(self, to_replace: str, replace_with: str, mode: int) -> None:
+    def replaceText(self, to_replace: str, replace_with: str, mode: int):
         # 1 - replace, 0 - return old
         text = self.ui.textEdit.toPlainText()
         if mode == 1:
@@ -707,6 +369,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.textEdit.setStyleSheet("")
             self.ui.statusBar.setStyleSheet("")
 
+    def setTimers(self):
+        if self._save_seconds:
+            self.timer.setInterval(self._save_seconds * 1000)
+            self.timer.start()
+        if self._clear_seconds:
+            self.timer_2.setInterval(self._clear_seconds * 1000)
+            self.timer_2.start()
+
     def signalHandler(self, window: QtWidgets.QDialog):
         settings = get_settings()
         if not settings:
@@ -716,12 +386,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._numeration = settings["File-numeration"]
         self._save_seconds = settings.get("Save_seconds")
         self._clear_seconds = settings.get("Clear_seconds")
-        if self._save_seconds:
-            self.timer.setInterval(self._save_seconds * 1000)
-            self.timer.start()
-        if self._clear_seconds:
-            self.timer_2.setInterval(self._clear_seconds * 1000)
-            self.timer_2.start()
+        self.setTimers()
 
     def createSettingsWindow(self):
         self.updateSettings()
@@ -751,10 +416,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
-    future()
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
     sys.exit(app.exec())
-
-
-# tab
