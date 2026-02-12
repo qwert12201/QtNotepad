@@ -16,8 +16,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
         self.ui.textEdit.clear()
-        self.version = "1.15"
+        self.version = "1.2"
+        self._lang = ""
         self.settings = {}
+        self.context_menu = QtWidgets.QMenu(self)  # right click
 
         self.updateSettings()
         self.ui.statusBar.setVisible(self.settings["StatusBar-info"])
@@ -53,7 +55,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.file = None
         self.app_translator = QtCore.QTranslator(app)
-        self.context_menu = QtWidgets.QMenu(self)  # right click
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(lambda: self.timer.start())
@@ -77,7 +78,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionUndo.triggered.connect(self.ui.textEdit.undo)
         self.ui.actionRedo.triggered.connect(self.ui.textEdit.redo)
         for _clr in self.colors:
-            temp_widget = getattr(self.ui, "action" + _clr)
+            temp_widget: QtGui.QAction = getattr(self.ui, "action" + _clr)
             temp_widget.triggered.connect(lambda _, clr=_clr: self.color(clr.lower()))
         self.ui.actionResetColor.triggered.connect(lambda: self.ui.textEdit.setTextColor(QtGui.QColor("white")))
         self.ui.actionReadOnly.triggered.connect(lambda: self.ui.textEdit.setReadOnly(not self.ui.textEdit.isReadOnly()))
@@ -88,15 +89,10 @@ class MainWindow(QtWidgets.QMainWindow):
             action.triggered.connect(lambda _, w=weight: self.ui.textEdit.setFontWeight(w))
         self.ui.actionResetStyle.triggered.connect(self.resetStyles)
 
-        # contextMenu
-        self.ui.actionDelete = QtGui.QAction("Delete", self)
-        self.ui.actionDelete.setObjectName("actionDelete")
-        self.ui.actionCopy = QtGui.QAction("Copy", self)
-        self.ui.actionCopy.setObjectName("actionCopy")
-        self.ui.actionPaste = QtGui.QAction("Paste", self)
-        self.ui.actionPaste.setObjectName("actionPaste")
-        self.ui.actionCut = QtGui.QAction("Cut", self)
-        self.ui.actionCut.setObjectName("actionCut")
+        # Feautures
+        self.ui.actionFind.triggered.connect(self.createFindWindow)
+
+        # ContextMenu right click
         self.ui.actionDelete.triggered.connect(lambda: self.ui.textEdit.textCursor().removeSelectedText())
         self.ui.actionCopy.triggered.connect(self.ui.textEdit.copy)
         self.ui.actionPaste.triggered.connect(self.ui.textEdit.paste)
@@ -119,18 +115,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.context_menu.addAction(self.ui.actionResetStyle)
         self.ui.textEdit.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.ui.textEdit.customContextMenuRequested.connect(self.showContextMenuEvent)
-        self.context_menu.setStyleSheet(parse_qss("QMenu"))
-
-        # Feautures
-        self.ui.actionFind.triggered.connect(self.createFindWindow)
 
         # Settings
         self.ui.actionMenu.triggered.connect(self.createSettingsWindow)
         self.ui.actionReset_settings.triggered.connect(lambda: updateFileConfig(generate_basic_settings()))
+        self.ui.actionAbout.triggered.connect(lambda: QtWidgets.QMessageBox.about(self, self.tr("About"), self.tr("Thank you for using my project!\n\nI try to make all my tools without AI, so notepad can contains errors and mistakes. If you find some of them, then please make a pull request or report them in 'Issues' tab in github")))
+        self.ui.actionRussian.triggered.connect(lambda: self.translation("ru"))
+        self.ui.actionEnglish.triggered.connect(lambda: self.translation("eng"))
 
     def exit(self) -> int:
         code = self.saveChanges()
         return code
+
+    def translation(self, lang: str):
+        app.removeTranslator(self.app_translator)
+        self.app_translator.load(f"{path}translations\\{lang}.qm")
+        app.installTranslator(self.app_translator)
+        self._lang = lang
+        self.ui.retranslateUi(self)
 
     def updateSettings(self):
         settings = get_settings()
@@ -148,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow):
             first = cursor.position()
             second = cursor.columnNumber()
             third = cursor.blockNumber()
-            self.ui.statusBar.showMessage(f"Current cursor position: {first}, line: {third}, column: {second}")
+            self.ui.statusBar.showMessage(self.tr("Current cursor position: {first}, line: {third}, column: {second}").format(first=first, third=third, second=second))
 
     def showContextMenuEvent(self, pos):
         self.context_menu.exec(self.ui.textEdit.viewport().mapToGlobal(pos))
@@ -161,7 +163,7 @@ class MainWindow(QtWidgets.QMainWindow):
         a0.ignore()
 
     def _fileSaver(self):
-        file, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save file")
+        file, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr("Save file"))
         if file:
             self.file = file
 
@@ -179,7 +181,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         line += "\n"
                         f.write(line)
             except PermissionError:
-                QtWidgets.QMessageBox.warning(self, "Permissions", "You don't have rights to apply changes")
+                QtWidgets.QMessageBox.critical(self, self.tr("Permissions"), self.tr("You don't have rights to apply changes!"))
 
     def clearTextEdit(self):
         if not self._clear_seconds:
@@ -191,7 +193,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.settings["Confirmation"]:
             return -1
         elif self.ui.textEdit.toPlainText():
-            choice = QtWidgets.QMessageBox.question(self, "Warning", "Do you want to save the changes?", QtWidgets.QMessageBox.StandardButton.Save | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel, QtWidgets.QMessageBox.StandardButton.Save)
+            choice = QtWidgets.QMessageBox.question(self, self.tr("Warning"), self.tr("Do you want to save the changes?"), QtWidgets.QMessageBox.StandardButton.Save | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel, QtWidgets.QMessageBox.StandardButton.Save)
             if choice == QtWidgets.QMessageBox.StandardButton.Save:
                 if not self.file:
                     self._fileSaver()
@@ -213,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         elif code == 1:
             self._writeLines()
-        file, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", filter="*.txt")
+        file, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr("Open file"), filter="*.txt")
         if file:
             self.file = file
             self.ui.textEdit.clear()
@@ -222,7 +224,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     for line in f:
                         self.ui.textEdit.append(line[:-1])
             except UnicodeError:
-                QtWidgets.QMessageBox.warning(self, "Permissions", "File contains non utf-8 symbols and can't be viewed!")
+                QtWidgets.QMessageBox.critical(self, self.tr("Unicode Error"), self.tr("File contains non utf-8 symbols and can't be viewed!"))
 
     def saveFile(self):
         if not self.file:
@@ -362,12 +364,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.menubar.setStyleSheet(parse_qss("QMenuBar") + "\n\n" + parse_qss("QMenu"))
             self.ui.textEdit.setStyleSheet(parse_qss("QScrollBar") + "\n\n" + parse_qss("QTextEdit"))
             self.ui.statusBar.setStyleSheet(parse_qss("QStatusBar"))
+            self.context_menu.setStyleSheet(parse_qss("QMenu"))
         else:
             self.setStyleSheet("")
             self.ui.centralwidget.setStyleSheet("")
             self.ui.menubar.setStyleSheet("")
             self.ui.textEdit.setStyleSheet("")
             self.ui.statusBar.setStyleSheet("")
+            self.context_menu.setStyleSheet("")
 
     def setTimers(self):
         if self._save_seconds:
@@ -391,6 +395,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def createSettingsWindow(self):
         self.updateSettings()
         window = SettingsWindow(self.version)
+        if self._lang == "ru":
+            font = QtGui.QFont()
+            font.setPointSize(8)
+            window.ui.compileButton.setFont(font)
+            window.ui.checkGithubButton.setFont(font)
+            window.ui.importButton.setFont(font)
+            window.ui.resetButton.setFont(font)
+            window.ui.applyButton.setFont(font)
+            window.ui.exitButton.setFont(font)
+            window.ui.applyButton.setStyleSheet("min-width: 45px;")
+            window.ui.importButton.setStyleSheet("min-width: 45px;")
         self.changeStyleModeSettingsWindow(window, self.settings["QSS-styles"])
         window.settings_changed.connect(lambda: self.signalHandler(window))
         self.closed.connect(window.exit)
@@ -402,6 +417,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if text:
             window = FindWindow(text)
             self.changeStyleModeFindWindow(window, self.settings["QSS-styles"])
+            if self._lang == "ru":
+                window.ui.label_2.setStyleSheet("font-size: 8pt;")
             window.ui.previousButton.clicked.connect(lambda: self.viewText(window, 0))
             window.ui.nextButton.clicked.connect(lambda: self.viewText(window, 1))
             window.ui.resetReplaceButton.clicked.connect(lambda: self.replaceText(window.to_find, window.replace_with, 0))

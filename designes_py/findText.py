@@ -70,7 +70,7 @@ class Ui_Dialog(object):
         self.searchButton.setObjectName("searchButton")
         self.horizontalLayout.addWidget(self.searchButton)
         self.showInfoBox = QtWidgets.QCheckBox(parent=Dialog)
-        self.showInfoBox.setGeometry(QtCore.QRect(8, 140, 97, 21))
+        self.showInfoBox.setGeometry(QtCore.QRect(8, 140, 120, 21))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.showInfoBox.setFont(font)
@@ -165,6 +165,7 @@ class FindWindow(QtWidgets.QDialog):
         self.index = 0
         self.to_find = ""
         self.replace_with = ""
+        self.setWindowTitle(self.tr("Search"))
         self.show()
 
         self.info_widgets = [
@@ -187,11 +188,11 @@ class FindWindow(QtWidgets.QDialog):
 
     def changeMode(self):
         if not self.to_find:
-            QtWidgets.QMessageBox.critical(self, "Error", "You haven't searched any line!")
+            QtWidgets.QMessageBox.critical(self, self.tr("Error"), self.tr("You haven't searched any line!"))
             return
         self.ui.saveMatchesButton.setEnabled(False)
-        self.ui.searchButton.setText("Replace")
-        self.ui.label_2.setText("Replace:")
+        self.ui.searchButton.setText(self.tr("Replace"))
+        self.ui.label_2.setText(self.tr("Replace:"))
         self.ui.previousButton.setEnabled(False)
         self.ui.nextButton.setEnabled(False)
         self.ui.lineEdit.clear()
@@ -204,10 +205,10 @@ class FindWindow(QtWidgets.QDialog):
         self.ui.showInfoBox.setEnabled(True)
         self.ui.showInfoBox.setChecked(False)
         self.ui.lineEdit.setReadOnly(False)
-        self.ui.label_2.setText("Find:")
-        self.ui.info1Label.setText("Line to find: ")
-        self.ui.info2Label.setText("Total lines: ")
-        self.ui.info3Label.setText("Matches total: ")
+        self.ui.label_2.setText(self.tr("Find:"))
+        self.ui.info1Label.setText(self.tr("Line to find: "))
+        self.ui.info2Label.setText(self.tr("Total lines: "))
+        self.ui.info3Label.setText(self.tr("Matches total: "))
         self.buffer.clear()
         self.line_buffer.clear()
         self.index = 0
@@ -217,7 +218,7 @@ class FindWindow(QtWidgets.QDialog):
         self.ui.replaceModeButton.setEnabled(False)
         self.ui.searchButton.setEnabled(True)
         self.ui.resetReplaceButton.setEnabled(False)
-        self.ui.searchButton.setText("Search")
+        self.ui.searchButton.setText(self.tr("Search"))
         self.new_text.emit()
 
     def activateInfoLabels(self):
@@ -227,14 +228,14 @@ class FindWindow(QtWidgets.QDialog):
     def updateInfo(self, to_find: str, total_lines: int, matches: int):
         info_labels_is_active = self.ui.info1Label.isEnabled()
         if info_labels_is_active:
-            self.ui.info1Label.setText(f'Line to find: "{to_find}"')
-            self.ui.info2Label.setText(f"Total lines: {total_lines}")
-            self.ui.info3Label.setText(f"Matches total: {matches}")
+            self.ui.info1Label.setText(self.tr('Line to find: "{to_find}"').format(to_find=to_find))
+            self.ui.info2Label.setText(self.tr("Total lines: {total_lines}").format(total_lines=total_lines))
+            self.ui.info3Label.setText(self.tr("Matches total: {matches}").format(matches=matches))
 
     def search(self):
         to_find = self.ui.lineEdit.text().strip().lower()
         if not to_find:
-            QtWidgets.QMessageBox.warning(self, "Warning", "You haven't written any letters")
+            QtWidgets.QMessageBox.critical(self, self.tr("Error"), self.tr("You haven't written any letters!"))
             return
         self.to_find = to_find
         matches, total_lines, temp = 0, 0, 0
@@ -260,20 +261,20 @@ class FindWindow(QtWidgets.QDialog):
     def searchButton(self):
         self.search()
         if self.buffer or self.line_buffer:
-            self.ui.lineEdit.setText("Found!")
+            self.ui.lineEdit.setText(self.tr("Found!"))
             self.ui.previousButton.setEnabled(False)
             self.ui.nextButton.setEnabled(True)
             self.ui.saveMatchesButton.setEnabled(True)
             self.ui.replaceModeButton.setEnabled(True)
             self.ui.showInfoBox.setEnabled(False)
         else:
-            self.ui.lineEdit.setText("Not found!")
+            self.ui.lineEdit.setText(self.tr("Not found!"))
         self.ui.lineEdit.setReadOnly(True)
 
     def replaceButton(self):
         self.replace_with = self.ui.lineEdit.text().strip().lower()
         if not self.replace_with:
-            QtWidgets.QMessageBox.warning(self, "Warning", "You haven't written any letters!")
+            QtWidgets.QMessageBox.critical(self, self.tr("Error"), self.tr("You haven't written any letters!"))
             return
         self.replace.emit()
         self.ui.lineEdit.setReadOnly(True)
@@ -281,24 +282,24 @@ class FindWindow(QtWidgets.QDialog):
 
     def handleControlButton(self):
         button_text = self.ui.searchButton.text()
-        if button_text == "Search":
+        if button_text == self.tr("Search"):
             self.searchButton()
-        elif button_text == "Replace":
+        elif button_text == self.tr("Replace"):
             self.replaceButton()
         self.ui.searchButton.setEnabled(False)
 
     def saveMatches(self):
         if not self.buffer:
-            QtWidgets.QMessageBox.warning(self, "Warning", "You have to search something to save")
+            QtWidgets.QMessageBox.critical(self, self.tr("Error"), self.tr("You have to search something to save!"))
             return
-        file, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save file")
+        file, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr("Save file"))
         if not file:
             return
         try:
             with open(file, "w", encoding="utf-8") as f:
                 for line in self.line_buffer:
                     f.write(line + "\n")
-                QtWidgets.QMessageBox.information(self, "Writing", "Matches were saved!")
+                QtWidgets.QMessageBox.information(self, self.tr("Success"), self.tr("Matches were saved!"))
         except PermissionError:
-            QtWidgets.QMessageBox.critical(self, "Fail", "You don't have permissions to write in file!")
+            QtWidgets.QMessageBox.critical(self, self.tr("Permission error"), self.tr("You don't have permissions to write in file!"))
             return

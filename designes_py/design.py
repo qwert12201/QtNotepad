@@ -19,8 +19,22 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.textEdit = QtWidgets.QTextEdit(parent=self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(0, 0, 500, 450))
+        self.textEdit.setToolTip("")
+        self.textEdit.setStatusTip("")
+        self.textEdit.setWhatsThis("")
+        self.textEdit.setAccessibleName("")
+        self.textEdit.setAccessibleDescription("")
+        self.textEdit.setAccessibleIdentifier("")
         self.textEdit.setStyleSheet("")
         self.textEdit.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.textEdit.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">qweeqw</p></body></html>")
         self.textEdit.setAcceptRichText(False)
         self.textEdit.setObjectName("textEdit")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -67,24 +81,44 @@ class Ui_MainWindow(object):
         self.actionFindReplace = QtGui.QAction(parent=MainWindow)
         self.actionFindReplace.setObjectName("actionFindReplace")
         self.actionBold = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.actionBold.setFont(font)
         self.actionBold.setObjectName("actionBold")
         self.actionItalic = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        font.setItalic(True)
+        self.actionItalic.setFont(font)
         self.actionItalic.setObjectName("actionItalic")
         self.actionUnderline = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        font.setUnderline(True)
+        self.actionUnderline.setFont(font)
         self.actionUnderline.setObjectName("actionUnderline")
         self.actionCrossOut = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        font.setStrikeOut(True)
+        self.actionCrossOut.setFont(font)
         self.actionCrossOut.setObjectName("actionCrossOut")
         self.actionReadOnly = QtGui.QAction(parent=MainWindow)
         self.actionReadOnly.setObjectName("actionReadOnly")
         self.actionThin = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        self.actionThin.setFont(font)
         self.actionThin.setObjectName("actionThin")
         self.actionLight = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        self.actionLight.setFont(font)
         self.actionLight.setObjectName("actionLight")
         self.actionNormal = QtGui.QAction(parent=MainWindow)
         self.actionNormal.setObjectName("actionNormal")
         self.actionMedium = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        self.actionMedium.setFont(font)
         self.actionMedium.setObjectName("actionMedium")
         self.actionDemiBold = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        self.actionDemiBold.setFont(font)
         self.actionDemiBold.setObjectName("actionDemiBold")
         self.action1 = QtGui.QAction(parent=MainWindow)
         self.action1.setObjectName("action1")
@@ -115,8 +149,13 @@ class Ui_MainWindow(object):
         self.actionResetFormat = QtGui.QAction(parent=MainWindow)
         self.actionResetFormat.setObjectName("actionResetFormat")
         self.actionBold2 = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.actionBold2.setFont(font)
         self.actionBold2.setObjectName("actionBold2")
         self.actionExtraBold = QtGui.QAction(parent=MainWindow)
+        font = QtGui.QFont()
+        self.actionExtraBold.setFont(font)
         self.actionExtraBold.setObjectName("actionExtraBold")
         self.actionResetStyle = QtGui.QAction(parent=MainWindow)
         self.actionResetStyle.setObjectName("actionResetStyle")
@@ -185,20 +224,21 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFeatures.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
 
+        self.actionDelete = QtGui.QAction(parent=MainWindow)
+        self.actionDelete.setObjectName("actionDelete")
+        self.actionCopy = QtGui.QAction(parent=MainWindow)
+        self.actionCopy.setObjectName("actionCopy")
+        self.actionPaste = QtGui.QAction(parent=MainWindow)
+        self.actionPaste.setObjectName("actionPaste")
+        self.actionCut = QtGui.QAction(parent=MainWindow)
+        self.actionCut.setObjectName("actionCut")
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.textEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"li.unchecked::marker { content: \"\\2610\"; }\n"
-"li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:\'Segoe UI\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">qweeqw</p></body></html>"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Notepad"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
         self.menuText_view.setTitle(_translate("MainWindow", "Text view"))
@@ -207,6 +247,12 @@ class Ui_MainWindow(object):
         self.menuFeatures.setTitle(_translate("MainWindow", "Features"))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
         self.menuChange_language.setTitle(_translate("MainWindow", "Change language"))
+
+        self.actionDelete.setText(_translate("MainWindow", "Delete"))
+        self.actionCopy.setText(_translate("MainWindow", "Copy"))
+        self.actionCut.setText(_translate("MainWindow", "Cut"))
+        self.actionPaste.setText(_translate("MainWindow", "Paste"))
+
         self.actionNew.setText(_translate("MainWindow", "New"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         self.actionSave.setText(_translate("MainWindow", "Save"))

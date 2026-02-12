@@ -4,7 +4,7 @@
     "Self-clear": false,
     "Confirmation": true,
     "QSS-styles": true,
-    "Auto-save": false,
+    "Auto-save": true,
     "Clear_seconds": 0,
-    "Save_seconds": 0
+    "Save_seconds": 10
 }

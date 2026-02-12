@@ -205,6 +205,7 @@ class Ui_Dialog(object):
         self.applyButton.setText(_translate("Dialog", "Apply"))
         self.importButton.setToolTip(_translate("Dialog", "Import config"))
         self.importButton.setText(_translate("Dialog", "Import"))
+        self.resetButton.setToolTip(_translate("Dialog", "Resets config"))
         self.resetButton.setText(_translate("Dialog", "Reset"))
         self.exitButton.setToolTip(_translate("Dialog", "Exit from settings"))
         self.exitButton.setText(_translate("Dialog", "Exit"))
@@ -223,13 +224,14 @@ class SettingsWindow(QtWidgets.QDialog):
         super().__init__()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.setWindowTitle(self.tr("Settings"))
         self.setFixedSize(self.size())
         self.show()
         self._changed = False
         self._save_seconds = 0
         self._clear_seconds = 0
 
-        self.ui.label_2.setText(f"Version: {version}")
+        self.ui.label_2.setText(self.tr("Version: {version}").format(version=version))
         self.settings = ""
         self.updateSettings()
 
@@ -267,12 +269,12 @@ class SettingsWindow(QtWidgets.QDialog):
         self.ui.clearBox.checkStateChanged.connect(self.ui.lineEdit_2.clear)
 
     def makeExeWrapper(self):
-        QtWidgets.QMessageBox.information(self, "Info", "Building exe procces started!")
+        QtWidgets.QMessageBox.information(self, self.tr("Info"), self.tr("Building exe procces started!"))
         value = make_exe()
         if not value:
-            QtWidgets.QMessageBox.critical(self, "Error", "Building exe procces was interrupted and unsuccessful!")
+            QtWidgets.QMessageBox.critical(self, self.tr("Error"), self.tr("Building exe procces was interrupted and unsuccessful!"))
             return
-        QtWidgets.QMessageBox.information(self, "Info", "Building exe procces ended successful!\nYour result - main.exe in 'dist' folder.")
+        QtWidgets.QMessageBox.information(self, self.tr("Info"), self.tr("Building exe procces ended successful!\nYour result - main.exe in 'dist' folder."))
 
     def updateSettings(self):
         settings = get_settings()
@@ -289,7 +291,7 @@ class SettingsWindow(QtWidgets.QDialog):
         if not self.settings["Confirmation"]:
             return -1
         elif self._changed:
-            choice = QtWidgets.QMessageBox.question(self, "Warning", "Do you want to save the changes?", QtWidgets.QMessageBox.StandardButton.Save | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel, QtWidgets.QMessageBox.StandardButton.Save)
+            choice = QtWidgets.QMessageBox.question(self, self.tr("Warning"), self.tr("Do you want to save the changes?"), QtWidgets.QMessageBox.StandardButton.Save | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel, QtWidgets.QMessageBox.StandardButton.Save)
             if choice == QtWidgets.QMessageBox.StandardButton.Save:
                 self.applyChanges()
                 return 1
@@ -305,7 +307,7 @@ class SettingsWindow(QtWidgets.QDialog):
             if a.isdigit() and int(a) != 0:
                 self._save_seconds = int(a)
             else:
-                QtWidgets.QMessageBox.warning(self, "Seconds", "Seconds aren't correctly")
+                QtWidgets.QMessageBox.critical(self, self.tr("Incorrect seconds"), self.tr("Seconds aren't correctly!"))
                 self._save_seconds = 0
         else:
             self._save_seconds = 0
@@ -314,7 +316,7 @@ class SettingsWindow(QtWidgets.QDialog):
             if b.isdigit() and int(b) != 0:
                 self._clear_seconds = int(b)
             else:
-                QtWidgets.QMessageBox.warning(self, "Seconds", "Seconds aren't correctly")
+                QtWidgets.QMessageBox.critical(self, self.tr("Incorrect seconds"), self.tr("Seconds aren't correctly!"))
                 self._clear_seconds = 0
         else:
             self._clear_seconds = 0
@@ -335,18 +337,15 @@ class SettingsWindow(QtWidgets.QDialog):
         self.changed.emit()
 
     def importSettings(self):
-        file, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", filter="*.json")
+        file, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr("Open file"), filter="*.json")
         if file:
             try:
                 with open(file, "r", encoding="utf-8") as f:
                     settings = dict(json.load(f))
-                    print(settings.keys())
-                    print()
-                    print(self.settings_template.keys())
                     if settings.keys() != self.settings_template.keys():
-                        QtWidgets.QMessageBox.critical(self, "Settings", "Settings written incorrectly!")
+                        QtWidgets.QMessageBox.critical(self, self.tr("Settings"), self.tr("Settings written incorrectly!"))
                         return
-                    choice = QtWidgets.QMessageBox.warning(self, "Confirm", "Do you confirm rewriting settings.json file?", QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.Cancel)
+                    choice = QtWidgets.QMessageBox.warning(self, self.tr("Confirm"), self.tr("Do you confirm rewriting settings.json file?"), QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.Cancel)
                     if choice == QtWidgets.QMessageBox.StandardButton.Cancel:
                         return
                     self.settings = settings
@@ -355,12 +354,12 @@ class SettingsWindow(QtWidgets.QDialog):
                     self.changed.emit()
                     self.settings_changed.emit()
             except json.JSONDecodeError:
-                QtWidgets.QMessageBox.critical(self, "Settings", "Settings in file isn't correctly!")
+                QtWidgets.QMessageBox.critical(self, self.tr("Settings"), self.tr("Settings in file isn't correctly!"))
                 return
 
     def applyChanges(self):
         if self.settings.get("Confirmation"):
-            choice = QtWidgets.QMessageBox.warning(self, "Confirm", "Do you confirm rewriting settings.json file?", QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.Cancel)
+            choice = QtWidgets.QMessageBox.warning(self, self.tr("Confirm"), self.tr("Do you confirm rewriting settings.json file?"), QtWidgets.QMessageBox.StandardButton.Yes, QtWidgets.QMessageBox.StandardButton.Cancel)
             if choice == QtWidgets.QMessageBox.StandardButton.Cancel:
                 return
         temp = {key: widget.isChecked() for key, widget in list(self.settings_template.items())[:-2]}
@@ -391,7 +390,7 @@ class SettingsWindow(QtWidgets.QDialog):
             result += "}"
             self.ui.textEdit.setText(result)
         else:
-            self.ui.textEdit.setText("File not found!")
+            self.ui.textEdit.setText(self.tr("File not found!"))
 
     def checkSettings(self):
         for key, widget in list(self.settings_template.items())[:-2]:

@@ -4,33 +4,29 @@ import sys
 import PyInstaller.__main__
 
 file_list = [
-    "all.qss", "main.py", "settings.json", "designes_py"
-]
-
-file_list_2 = [
-    "design.py", "findText.py", "modules.py", "settingsWindow.py"
+    "all.qss", "main.py", "settings.json", "designes_py", "translations",
+    "design.py", "findText.py", "modules.py", "settingsWindow.py", "eng.qm", "ru.qm"
 ]
 
 path = "\\".join(os.path.abspath(os.path.dirname(__file__)).split("\\")[:-1]) + "\\"
 
 if hasattr(sys, "_MEIPASS"):
     path = os.path.join(sys._MEIPASS) + "\\"
-    print(sys._MEIPASS)
 
 def make_exe() -> bool:
-    temp = os.listdir(path)
+    try:
+        temp = os.listdir(path) + os.listdir(path + "designes_py") + os.listdir(path + "translations")
+    except FileNotFoundError:
+        return False
     for file in file_list:
         if file not in temp:
             return False
-    temp = os.listdir(path + "designes_py")
-    for file in file_list_2:
-        if file not in temp:
-            return False
     try:
-        PyInstaller.__main__.run((
+        PyInstaller.__main__.run([
             path + "main.py", "-w", "--onefile", "--add-data", path + "all.qss;.", "--add-data", 
-            path + "settings.json;.", "--add-data", path + "designes_py;designes_py"
-        ))
+            path + "settings.json;.", "--add-data", path + "designes_py;designes_py", "--add-data",
+            path + "translations;translations"
+        ])
     except Exception:
         return False
     return True
