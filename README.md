@@ -9,4 +9,6 @@ It's a simple notepad on PyQt6 + QSS. Notepad supports formatting, search, text 
   5. Install packages: `pip install -r requirements.txt`
   6. Run main.py: `python main.py`
 
+Or you can use precompiled main.exe from dist/
+
 ~ Thank you for your attention, if you enjoy my project, please star this repository ~
