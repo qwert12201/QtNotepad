@@ -1,0 +1,36 @@
+<RCC>
+  <qresource prefix="File">
+    <file>png/exit.png</file>
+    <file>png/file.png</file>
+    <file>png/folder.png</file>
+    <file>png/save (1).png</file>
+    <file>png/save.png</file>
+  </qresource>
+  <qresource prefix="Features">
+    <file>png/text.png</file>
+  </qresource>
+  <qresource prefix="Settings">
+    <file>png/information-button.png</file>
+    <file>png/language.png</file>
+    <file>png/menu.png</file>
+    <file>png/reset settings.png</file>
+  </qresource>
+  <qresource prefix="Menu">
+    <file>png/bold.png</file>
+    <file>png/cross-out.png</file>
+    <file>png/italic-font.png</file>
+    <file>png/russia.png</file>
+    <file>png/united-kingdom.png</file>
+    <file>png/weight.png</file>
+    <file>png/underline.png</file>
+  </qresource>
+  <qresource prefix="Edit">
+    <file>png/reload.png</file>
+    <file>png/text-format.png</file>
+    <file>png/underline.png</file>
+    <file>png/view.png</file>
+    <file>png/palette.png</file>
+    <file>png/redo.png</file>
+    <file>png/undo.png</file>
+  </qresource>
+</RCC>

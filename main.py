@@ -2,6 +2,7 @@ import sys
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
+import resources  # noqa
 from designes_py.modules import *
 from designes_py.design import Ui_MainWindow
 from designes_py.findText import FindWindow
@@ -16,7 +17,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
         self.ui.textEdit.clear()
-        self.version = "1.2"
+        self.version = "1.3"
         self._lang = ""
         self.settings = {}
         self.context_menu = QtWidgets.QMenu(self)  # right click
