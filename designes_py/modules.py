@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import shutil
 import PyInstaller.__main__
 
 file_list = [
@@ -12,6 +13,15 @@ path = "\\".join(os.path.abspath(os.path.dirname(__file__)).split("\\")[:-1]) + 
 
 if hasattr(sys, "_MEIPASS"):
     path = os.path.join(sys._MEIPASS) + "\\"
+
+def future():
+    shutil.rmtree("test")
+    os.mkdir("test")
+    for i in range(10):
+        file = f"test/test_{i}.txt"
+        with open(file, "w", encoding="utf-8"): 
+            pass
+    print("Nothing's gonna change my world")
 
 def make_exe() -> bool:
     try:

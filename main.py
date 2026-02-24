@@ -2,7 +2,7 @@ import sys
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
-import resources  # noqa
+import resource  # noqa
 from designes_py.modules import *
 from designes_py.design import Ui_MainWindow
 from designes_py.findText import FindWindow
@@ -17,7 +17,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
         self.ui.textEdit.clear()
-        self.version = "1.3"
+        self.version = "1.3.1"
         self._lang = ""
         self.settings = {}
         self.context_menu = QtWidgets.QMenu(self)  # right click
@@ -73,7 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionOpen.triggered.connect(self.openFile)
         self.ui.actionSave.triggered.connect(self.saveFile)
         self.ui.actionSave_as.triggered.connect(self.saveAsFile)
-        self.ui.actionExit.triggered.connect(self.exit)
+        self.ui.actionExit.triggered.connect(self.close)
 
         # menuEdit
         self.ui.actionUndo.triggered.connect(self.ui.textEdit.undo)
@@ -124,10 +124,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionRussian.triggered.connect(lambda: self.translation("ru"))
         self.ui.actionEnglish.triggered.connect(lambda: self.translation("eng"))
 
-    def exit(self) -> int:
-        code = self.saveChanges()
-        return code
-
     def translation(self, lang: str):
         app.removeTranslator(self.app_translator)
         self.app_translator.load(f"{path}translations\\{lang}.qm")
@@ -157,8 +153,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.context_menu.exec(self.ui.textEdit.viewport().mapToGlobal(pos))
 
     def closeEvent(self, a0):
-        code = self.exit()
-        if code != 0:
+        code = self.saveChanges()
+        if code == 1:
             self.closed.emit()
             return super().closeEvent(a0)
         a0.ignore()
@@ -171,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _writeLines(self):
         if not self._save_seconds:
             self.timer.stop()
-        elif self.file:
+        if self.file:
             try:
                 with open(self.file, "w", encoding="utf-8") as f:
                     text = self.ui.textEdit.toPlainText().split("\n")
@@ -189,21 +185,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.timer_2.stop()
         self.ui.textEdit.clear()
 
-    def saveChanges(self) -> int:  # -1 - leave without save, 0 - not leave, 1 - leave with save
+    def saveChanges(self) -> int:  # 0 - not leave, 1 - leave
         self.updateSettings()
         if not self.settings["Confirmation"]:
-            return -1
+            return 1
         elif self.ui.textEdit.toPlainText():
             choice = QtWidgets.QMessageBox.question(self, self.tr("Warning"), self.tr("Do you want to save the changes?"), QtWidgets.QMessageBox.StandardButton.Save | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel, QtWidgets.QMessageBox.StandardButton.Save)
             if choice == QtWidgets.QMessageBox.StandardButton.Save:
                 if not self.file:
                     self._fileSaver()
                 self._writeLines()
-                return 1
             elif choice == QtWidgets.QMessageBox.StandardButton.Cancel:
                 return 0
-            elif choice == QtWidgets.QMessageBox.StandardButton.No:
-                return -1
+        return 1
 
     def newFile(self):
         code = self.saveChanges()
@@ -434,6 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
+    future()
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
     sys.exit(app.exec())

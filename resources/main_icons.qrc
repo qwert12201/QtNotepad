@@ -1,0 +1,34 @@
+<RCC>
+  <qresource prefix="File">
+    <file>main_theme/exit.png</file>
+    <file>main_theme/file.png</file>
+    <file>main_theme/folder.png</file>
+    <file>main_theme/save (1).png</file>
+    <file>main_theme/save.png</file>
+  </qresource>
+  <qresource prefix="Features">
+    <file>main_theme/text.png</file>
+  </qresource>
+  <qresource prefix="Edit">
+    <file>main_theme/reload.png</file>
+    <file>main_theme/palette.png</file>
+    <file>main_theme/redo.png</file>
+    <file>main_theme/text-format.png</file>
+    <file>main_theme/undo.png</file>
+    <file>main_theme/view.png</file>
+    <file>main_theme/weight.png</file>
+  </qresource>
+  <qresource prefix="Settings">
+    <file>main_theme/language.png</file>
+    <file>main_theme/information-button.png</file>
+    <file>main_theme/menu.png</file>
+    <file>main_theme/reset settings.png</file>
+  </qresource>
+  <qresource prefix="Menu">
+    <file>main_theme/bold.png</file>
+    <file>main_theme/copy.png</file>
+    <file>main_theme/cross-out.png</file>
+    <file>main_theme/italic-font.png</file>
+    <file>main_theme/underline.png</file>
+  </qresource>
+</RCC>

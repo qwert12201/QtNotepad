@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>470</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Notepad</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>500</width>
+      <height>450</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string notr="true"/>
+    </property>
+    <property name="statusTip">
+     <string notr="true"/>
+    </property>
+    <property name="whatsThis">
+     <string notr="true"/>
+    </property>
+    <property name="accessibleName">
+     <string notr="true"/>
+    </property>
+    <property name="accessibleDescription">
+     <string notr="true"/>
+    </property>
+    <property name="accessibleIdentifier">
+     <string notr="true"/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::NoFrame</enum>
+    </property>
+    <property name="html">
+     <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;qweeqw&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="acceptRichText">
+     <bool>false</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>500</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <widget class="QMenu" name="menuText_view">
+     <property name="title">
+      <string>Text view</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources/main_icons.qrc">
+       <normaloff>:/Edit/main_theme/text-format.png</normaloff>:/Edit/main_theme/text-format.png</iconset>
+     </property>
+     <widget class="QMenu" name="menuWeight">
+      <property name="title">
+       <string>Weight</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/main_icons.qrc">
+        <normaloff>:/Edit/main_theme/weight.png</normaloff>:/Edit/main_theme/weight.png</iconset>
+      </property>
+      <addaction name="actionThin"/>
+      <addaction name="actionLight"/>
+      <addaction name="actionNormal"/>
+      <addaction name="actionMedium"/>
+      <addaction name="actionDemiBold"/>
+      <addaction name="actionBold2"/>
+      <addaction name="actionExtraBold"/>
+     </widget>
+     <addaction name="actionBold"/>
+     <addaction name="actionItalic"/>
+     <addaction name="actionUnderline"/>
+     <addaction name="actionCrossOut"/>
+     <addaction name="menuWeight"/>
+     <addaction name="separator"/>
+     <addaction name="actionResetFormat"/>
+    </widget>
+    <widget class="QMenu" name="menuColor">
+     <property name="title">
+      <string>Color</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources/main_icons.qrc">
+       <normaloff>:/Edit/main_theme/palette.png</normaloff>:/Edit/main_theme/palette.png</iconset>
+     </property>
+     <addaction name="actionRed"/>
+     <addaction name="actionOrange"/>
+     <addaction name="actionYellow"/>
+     <addaction name="actionGreen"/>
+     <addaction name="actionBlue"/>
+     <addaction name="actionPurple"/>
+     <addaction name="actionGray"/>
+     <addaction name="actionWhite"/>
+     <addaction name="actionBlack"/>
+     <addaction name="separator"/>
+     <addaction name="actionResetColor"/>
+    </widget>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="menuColor"/>
+    <addaction name="actionReadOnly"/>
+    <addaction name="separator"/>
+    <addaction name="menuText_view"/>
+    <addaction name="separator"/>
+    <addaction name="actionResetStyle"/>
+   </widget>
+   <widget class="QMenu" name="menuFeatures">
+    <property name="title">
+     <string>Features</string>
+    </property>
+    <addaction name="actionFind"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <widget class="QMenu" name="menuChange_language">
+     <property name="title">
+      <string>Change language</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources/main_icons.qrc">
+       <normaloff>:/Settings/main_theme/language.png</normaloff>:/Settings/main_theme/language.png</iconset>
+     </property>
+     <addaction name="actionRussian"/>
+     <addaction name="actionEnglish"/>
+    </widget>
+    <addaction name="actionMenu"/>
+    <addaction name="menuChange_language"/>
+    <addaction name="actionReset_settings"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuFeatures"/>
+   <addaction name="menuSettings"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/File/main_theme/file.png</normaloff>:/File/main_theme/file.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/File/main_theme/folder.png</normaloff>:/File/main_theme/folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/File/main_theme/save.png</normaloff>:/File/main_theme/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/File/main_theme/save (1).png</normaloff>:/File/main_theme/save (1).png</iconset>
+   </property>
+   <property name="text">
+    <string>Save as</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/File/main_theme/exit.png</normaloff>:/File/main_theme/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionReset_settings">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Edit/main_theme/reload.png</normaloff>:/Edit/main_theme/reload.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset settings</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Settings/main_theme/information-button.png</normaloff>:/Settings/main_theme/information-button.png</iconset>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Features/main_theme/text.png</normaloff>:/Features/main_theme/text.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find text</string>
+   </property>
+  </action>
+  <action name="actionFindReplace">
+   <property name="text">
+    <string>Find and replace text</string>
+   </property>
+  </action>
+  <action name="actionBold">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Menu/main_theme/bold.png</normaloff>:/Menu/main_theme/bold.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bold</string>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+  </action>
+  <action name="actionItalic">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Menu/main_theme/italic-font.png</normaloff>:/Menu/main_theme/italic-font.png</iconset>
+   </property>
+   <property name="text">
+    <string>Italic</string>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
+  </action>
+  <action name="actionUnderline">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Menu/main_theme/underline.png</normaloff>:/Menu/main_theme/underline.png</iconset>
+   </property>
+   <property name="text">
+    <string>Underline</string>
+   </property>
+   <property name="font">
+    <font>
+     <underline>true</underline>
+    </font>
+   </property>
+  </action>
+  <action name="actionCrossOut">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Menu/main_theme/cross-out.png</normaloff>:/Menu/main_theme/cross-out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cross out</string>
+   </property>
+   <property name="font">
+    <font>
+     <strikeout>true</strikeout>
+    </font>
+   </property>
+  </action>
+  <action name="actionReadOnly">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Edit/main_theme/view.png</normaloff>:/Edit/main_theme/view.png</iconset>
+   </property>
+   <property name="text">
+    <string>Read-only</string>
+   </property>
+  </action>
+  <action name="actionThin">
+   <property name="text">
+    <string>Thin</string>
+   </property>
+   <property name="font">
+    <font>
+     <fontweight>Thin</fontweight>
+    </font>
+   </property>
+  </action>
+  <action name="actionLight">
+   <property name="text">
+    <string>Light</string>
+   </property>
+   <property name="font">
+    <font>
+     <fontweight>Light</fontweight>
+    </font>
+   </property>
+  </action>
+  <action name="actionNormal">
+   <property name="text">
+    <string>Normal (Regular)</string>
+   </property>
+  </action>
+  <action name="actionMedium">
+   <property name="text">
+    <string>Medium</string>
+   </property>
+   <property name="font">
+    <font>
+     <fontweight>Medium</fontweight>
+    </font>
+   </property>
+  </action>
+  <action name="actionDemiBold">
+   <property name="text">
+    <string>DemiBold</string>
+   </property>
+   <property name="font">
+    <font>
+     <fontweight>DemiBold</fontweight>
+    </font>
+   </property>
+  </action>
+  <action name="action1">
+   <property name="text">
+    <string>1 - Active</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Edit/main_theme/undo.png</normaloff>:/Edit/main_theme/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Edit/main_theme/redo.png</normaloff>:/Edit/main_theme/redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionThemes">
+   <property name="text">
+    <string>Themes</string>
+   </property>
+  </action>
+  <action name="actionRed">
+   <property name="text">
+    <string>Red</string>
+   </property>
+  </action>
+  <action name="actionOrange">
+   <property name="text">
+    <string>Orange</string>
+   </property>
+  </action>
+  <action name="actionYellow">
+   <property name="text">
+    <string>Yellow</string>
+   </property>
+  </action>
+  <action name="actionGreen">
+   <property name="text">
+    <string>Green</string>
+   </property>
+  </action>
+  <action name="actionBlue">
+   <property name="text">
+    <string>Blue</string>
+   </property>
+  </action>
+  <action name="actionPurple">
+   <property name="text">
+    <string>Purple</string>
+   </property>
+  </action>
+  <action name="actionGray">
+   <property name="text">
+    <string>Gray</string>
+   </property>
+  </action>
+  <action name="actionBlack">
+   <property name="text">
+    <string>Black</string>
+   </property>
+  </action>
+  <action name="actionResetColor">
+   <property name="text">
+    <string>Reset color</string>
+   </property>
+  </action>
+  <action name="actionResetFormat">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Edit/main_theme/reload.png</normaloff>:/Edit/main_theme/reload.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset format</string>
+   </property>
+  </action>
+  <action name="actionBold2">
+   <property name="text">
+    <string>Bold</string>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+  </action>
+  <action name="actionExtraBold">
+   <property name="text">
+    <string>ExtraBold</string>
+   </property>
+   <property name="font">
+    <font>
+     <fontweight>ExtraBold</fontweight>
+    </font>
+   </property>
+  </action>
+  <action name="actionResetStyle">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Edit/main_theme/reload.png</normaloff>:/Edit/main_theme/reload.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset style</string>
+   </property>
+  </action>
+  <action name="actionMenu">
+   <property name="icon">
+    <iconset resource="../resources/main_icons.qrc">
+     <normaloff>:/Settings/main_theme/menu.png</normaloff>:/Settings/main_theme/menu.png</iconset>
+   </property>
+   <property name="text">
+    <string>Menu</string>
+   </property>
+  </action>
+  <action name="actionWhite">
+   <property name="text">
+    <string>White</string>
+   </property>
+  </action>
+  <action name="actionFind_and_replace_text">
+   <property name="text">
+    <string>Find and replace text</string>
+   </property>
+  </action>
+  <action name="actionRussian">
+   <property name="icon">
+    <iconset resource="../resources/icons.qrc">
+     <normaloff>:/Menu/png/russia.png</normaloff>:/Menu/png/russia.png</iconset>
+   </property>
+   <property name="text">
+    <string>Russian</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="icon">
+    <iconset resource="../resources/icons.qrc">
+     <normaloff>:/Menu/png/united-kingdom.png</normaloff>:/Menu/png/united-kingdom.png</iconset>
+   </property>
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources/icons.qrc"/>
+  <include location="../resources/main_icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

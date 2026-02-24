@@ -13,7 +13,6 @@
     <file>png/information-button.png</file>
     <file>png/language.png</file>
     <file>png/menu.png</file>
-    <file>png/reset settings.png</file>
   </qresource>
   <qresource prefix="Menu">
     <file>png/bold.png</file>

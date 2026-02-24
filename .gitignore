@@ -1,7 +1,8 @@
 .git/
 __pycache__/
 *.spec
-*.ui
 env/
 _.swp
 build/
+test/
+pwd.py
