@@ -6,7 +6,8 @@ import PyInstaller.__main__
 
 file_list = [
     "all.qss", "main.py", "settings.json", "designes_py", "translations",
-    "design.py", "findText.py", "modules.py", "settingsWindow.py", "eng.qm", "ru.qm"
+    "design.py", "findText.py", "modules.py", "settingsWindow.py", "eng.qm", "ru.qm",
+    "resource.py"
 ]
 
 path = "\\".join(os.path.abspath(os.path.dirname(__file__)).split("\\")[:-1]) + "\\"

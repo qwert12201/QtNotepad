@@ -17,7 +17,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
         self.ui.textEdit.clear()
-        self.version = "1.3.1"
+        self.version = "1.3.2"
         self._lang = ""
         self.settings = {}
         self.context_menu = QtWidgets.QMenu(self)  # right click
@@ -428,7 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
-    future()
+    # future()
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
     sys.exit(app.exec())
