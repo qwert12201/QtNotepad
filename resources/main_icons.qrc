@@ -7,6 +7,7 @@
     <file>main_theme/save.png</file>
   </qresource>
   <qresource prefix="Features">
+    <file>main_theme/goto.png</file>
     <file>main_theme/text.png</file>
   </qresource>
   <qresource prefix="Edit">
@@ -25,6 +26,9 @@
     <file>main_theme/reset settings.png</file>
   </qresource>
   <qresource prefix="Menu">
+    <file>main_theme/cut.png</file>
+    <file>main_theme/delete.png</file>
+    <file>main_theme/paste.png</file>
     <file>main_theme/bold.png</file>
     <file>main_theme/copy.png</file>
     <file>main_theme/cross-out.png</file>

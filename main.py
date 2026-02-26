@@ -7,6 +7,7 @@ from designes_py.modules import *
 from designes_py.design import Ui_MainWindow
 from designes_py.findText import FindWindow
 from designes_py.settingsWindow import SettingsWindow
+from designes_py.gotoWindow import GotoWindow
 
 class MainWindow(QtWidgets.QMainWindow):
     closed = QtCore.pyqtSignal()
@@ -17,7 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
         self.ui.textEdit.clear()
-        self.version = "1.3.2"
+        self.version = "1.3.3"
         self._lang = ""
         self.settings = {}
         self.context_menu = QtWidgets.QMenu(self)  # right click
@@ -92,6 +93,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Feautures
         self.ui.actionFind.triggered.connect(self.createFindWindow)
+        self.ui.actionGoto.triggered.connect(self.createGotoWindow)
 
         # ContextMenu right click
         self.ui.actionDelete.triggered.connect(lambda: self.ui.textEdit.textCursor().removeSelectedText())
@@ -346,11 +348,11 @@ class MainWindow(QtWidgets.QMainWindow):
             window.ui.lineEdit.setStyleSheet(parse_qss("QLineEdit"))
             window.ui.showInfoBox.setStyleSheet(parse_qss("QCheckBox"))
             window.ui.verticalLayoutWidget.setStyleSheet("QLabel {font-size: 11pt;}")
-        else:
-            window.setStyleSheet("")
-            window.ui.lineEdit.setStyleSheet("")
-            window.ui.showInfoBox.setStyleSheet("")
-            window.ui.verticalLayoutWidget.setStyleSheet("")
+
+    def changeStyleModeGotoWindow(self, window: QtWidgets.QDialog, enabled: bool):
+        if enabled:
+            window.setStyleSheet(multiply_parser("QDialog", "QLabel", "QPushButton", "QToolTip"))
+            window.ui.lineEdit.setStyleSheet(parse_qss("QLineEdit"))
 
     def changeStyleMode(self, enabled: bool):
         if enabled:
@@ -376,6 +378,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.timer_2.setInterval(self._clear_seconds * 1000)
             self.timer_2.start()
 
+    def viewHandler(self, pos: tuple[int, int]):
+        self.resetSelection()
+        cursor = self.ui.textEdit.textCursor()
+        cursor.setPosition(pos[0], QtGui.QTextCursor.MoveMode.MoveAnchor)
+        cursor.setPosition(pos[1], QtGui.QTextCursor.MoveMode.KeepAnchor)
+        self.ui.textEdit.setTextCursor(cursor)
+
     def signalHandler(self, window: QtWidgets.QDialog):
         settings = get_settings()
         if not settings:
@@ -386,6 +395,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._save_seconds = settings.get("Save_seconds")
         self._clear_seconds = settings.get("Clear_seconds")
         self.setTimers()
+
+    def createGotoWindow(self):
+        text = self.ui.textEdit.toPlainText()
+        self.updateSettings()
+        if text:
+            window = GotoWindow(text)
+            self.changeStyleModeGotoWindow(window, self.settings["QSS-styles"])
+            self.closed.connect(window.close)
+            window.view.connect(self.viewHandler)
+            window.exec()
 
     def createSettingsWindow(self):
         self.updateSettings()

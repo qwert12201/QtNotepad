@@ -7,6 +7,7 @@
     <file>png/save.png</file>
   </qresource>
   <qresource prefix="Features">
+    <file>png/goto.png</file>
     <file>png/text.png</file>
   </qresource>
   <qresource prefix="Settings">
@@ -15,6 +16,10 @@
     <file>png/menu.png</file>
   </qresource>
   <qresource prefix="Menu">
+    <file>png/copy.png</file>
+    <file>png/cut.png</file>
+    <file>png/delete.png</file>
+    <file>png/paste.png</file>
     <file>png/bold.png</file>
     <file>png/cross-out.png</file>
     <file>png/italic-font.png</file>
