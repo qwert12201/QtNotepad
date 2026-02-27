@@ -233,7 +233,7 @@ class FindWindow(QtWidgets.QDialog):
             self.ui.info3Label.setText(self.tr("Matches total: {matches}").format(matches=matches))
 
     def search(self):
-        to_find = self.ui.lineEdit.text().strip().lower()
+        to_find = self.ui.lineEdit.text()
         if not to_find:
             QtWidgets.QMessageBox.critical(self, self.tr("Error"), self.tr("You haven't written any letters!"))
             return
@@ -241,7 +241,7 @@ class FindWindow(QtWidgets.QDialog):
         matches, total_lines, temp = 0, 0, 0
         letters_iterated = 0
         for line in self.strings:
-            line = line.strip().lower()
+            line = line.strip()
             total_lines += 1
             if to_find in line:
                 temp2 = 0
@@ -272,7 +272,7 @@ class FindWindow(QtWidgets.QDialog):
         self.ui.lineEdit.setReadOnly(True)
 
     def replaceButton(self):
-        self.replace_with = self.ui.lineEdit.text().strip().lower()
+        self.replace_with = self.ui.lineEdit.text()
         if not self.replace_with:
             QtWidgets.QMessageBox.critical(self, self.tr("Error"), self.tr("You haven't written any letters!"))
             return

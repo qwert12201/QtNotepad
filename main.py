@@ -1,4 +1,5 @@
 import sys
+from functools import partial
 
 from PyQt6 import QtWidgets, QtCore, QtGui
 
@@ -78,16 +79,16 @@ class MainWindow(QtWidgets.QMainWindow):
         # menuEdit
         self.ui.actionUndo.triggered.connect(self.ui.textEdit.undo)
         self.ui.actionRedo.triggered.connect(self.ui.textEdit.redo)
-        for _clr in self.colors:
-            temp_widget: QtGui.QAction = getattr(self.ui, "action" + _clr)
-            temp_widget.triggered.connect(lambda _, clr=_clr: self.color(clr.lower()))
+        for clr in self.colors:
+            temp_widget: QtGui.QAction = getattr(self.ui, "action" + clr)
+            temp_widget.triggered.connect(partial(self.color, clr.lower()))
         self.ui.actionResetColor.triggered.connect(lambda: self.ui.textEdit.setTextColor(QtGui.QColor("white")))
         self.ui.actionReadOnly.triggered.connect(lambda: self.ui.textEdit.setReadOnly(not self.ui.textEdit.isReadOnly()))
         for widget, format in self.format_table.items():
-            widget.triggered.connect(lambda _, fmt=format: self.formatingString(fmt))
+            widget.triggered.connect(partial(self.formatingString, format))
 
         for action, weight in self.weight_table.items():
-            action.triggered.connect(lambda _, w=weight: self.ui.textEdit.setFontWeight(w))
+            action.triggered.connect(partial(self.ui.textEdit.setFontWeight, weight))
         self.ui.actionResetStyle.triggered.connect(self.resetStyles)
 
         # Feautures

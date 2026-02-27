@@ -15,7 +15,7 @@ path = "\\".join(os.path.abspath(os.path.dirname(__file__)).split("\\")[:-1]) + 
 if hasattr(sys, "_MEIPASS"):
     path = os.path.join(sys._MEIPASS) + "\\"  # type: ignore
 
-def future():
+def future() -> None:
     try:
         shutil.rmtree("test")
         os.mkdir("test")
@@ -25,6 +25,7 @@ def future():
                 pass
         print("Nothing's gonna change my world")
     except Exception:
+        print("My opinions, hmm....")
         pass
 
 def make_exe() -> bool:
