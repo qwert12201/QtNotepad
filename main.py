@@ -3,7 +3,7 @@ import sys
 from PyQt6 import QtWidgets, QtCore, QtGui
 
 import resource  # noqa
-from designes_py.modules import *
+from designes_py.modules import *  # noqa
 from designes_py.design import Ui_MainWindow
 from designes_py.findText import FindWindow
 from designes_py.settingsWindow import SettingsWindow
@@ -18,7 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
         self.ui.textEdit.clear()
-        self.version = "1.3.3"
+        self.version = "1.3.4"
         self._lang = ""
         self.settings = {}
         self.context_menu = QtWidgets.QMenu(self)  # right click
@@ -65,7 +65,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer_2.setSingleShot(True)
         self.timer_2.timeout.connect(lambda: self.timer_2.start())
         self.timer_2.timeout.connect(self.clearTextEdit)
-
         self.setTimers()
         self.ui.textEdit.cursorPositionChanged.connect(self.changeStatusBar)
 
@@ -92,8 +91,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionResetStyle.triggered.connect(self.resetStyles)
 
         # Feautures
+        self.ui.menuFeatures.aboutToShow.connect(self.checkFeatures)
         self.ui.actionFind.triggered.connect(self.createFindWindow)
         self.ui.actionGoto.triggered.connect(self.createGotoWindow)
+        self.ui.actionCaps.triggered.connect(lambda: self.textFo("Up"))
+        self.ui.actionLower.triggered.connect(lambda: self.textFo("Down"))
 
         # ContextMenu right click
         self.ui.actionDelete.triggered.connect(lambda: self.ui.textEdit.textCursor().removeSelectedText())
@@ -126,6 +128,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.actionRussian.triggered.connect(lambda: self.translation("ru"))
         self.ui.actionEnglish.triggered.connect(lambda: self.translation("eng"))
 
+    def textFo(self, mode: str):
+        cursor = self.ui.textEdit.textCursor()
+        cursor.insertText(cursor.selectedText().upper() if mode == "Up" else cursor.selectedText().lower())
+        self.ui.textEdit.setTextCursor(cursor)
+
+    def checkFeatures(self):
+        text = self.ui.textEdit.toPlainText().strip()
+        cursor = self.ui.textEdit.textCursor()
+        self.ui.actionFind.setEnabled(len(text) > 0)
+        self.ui.actionGoto.setEnabled(len(text) > 0)
+        self.ui.actionCaps.setEnabled(cursor.hasSelection())
+        self.ui.actionLower.setEnabled(cursor.hasSelection())
+
     def translation(self, lang: str):
         app.removeTranslator(self.app_translator)
         self.app_translator.load(f"{path}translations\\{lang}.qm")
@@ -137,7 +152,7 @@ class MainWindow(QtWidgets.QMainWindow):
         settings = get_settings()
         if not settings:
             settings = generate_basic_settings()
-            updateFileConfig()
+            updateFileConfig(settings)
         self.settings = settings
 
     def changeStatusBar(self):
@@ -264,7 +279,7 @@ class MainWindow(QtWidgets.QMainWindow):
             temp.setFontStrikeOut(False)
             temp.setFontItalic(False)
             temp.setFontUnderline(False)
-            text_cursor.setCharFormat(temp) 
+            text_cursor.setCharFormat(temp)
             return
 
         self.ui.textEdit.mergeCurrentCharFormat(format)
@@ -322,7 +337,7 @@ class MainWindow(QtWidgets.QMainWindow):
             window.ui.previousButton.setEnabled(True)
             return
 
-    def getLines(self):
+    def getLines(self) -> list[str] | None:
         text = self.ui.textEdit.toPlainText()
         text = text.replace("\t", "    ")
         self.ui.textEdit.setText(text)
@@ -399,12 +414,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def createGotoWindow(self):
         text = self.ui.textEdit.toPlainText()
         self.updateSettings()
-        if text:
-            window = GotoWindow(text)
-            self.changeStyleModeGotoWindow(window, self.settings["QSS-styles"])
-            self.closed.connect(window.close)
-            window.view.connect(self.viewHandler)
-            window.exec()
+        window = GotoWindow(text)
+        self.changeStyleModeGotoWindow(window, self.settings["QSS-styles"])
+        self.closed.connect(window.close)
+        window.view.connect(self.viewHandler)
+        window.exec()
 
     def createSettingsWindow(self):
         self.updateSettings()
@@ -428,26 +442,25 @@ class MainWindow(QtWidgets.QMainWindow):
     def createFindWindow(self):
         text = self.getLines()
         self.updateSettings()
-        if text:
-            window = FindWindow(text)
-            self.changeStyleModeFindWindow(window, self.settings["QSS-styles"])
-            if self._lang == "ru":
-                window.ui.label_2.setStyleSheet("font-size: 8pt;")
-            window.ui.previousButton.clicked.connect(lambda: self.viewText(window, 0))
-            window.ui.nextButton.clicked.connect(lambda: self.viewText(window, 1))
-            window.ui.resetReplaceButton.clicked.connect(lambda: self.replaceText(window.to_find, window.replace_with, 0))
-            self.closed.connect(window.exit)
-            window.replace.connect(lambda: self.replaceText(window.to_find, window.replace_with, 1))
-            window.new_text.connect(lambda: window.replaceStrings(self.getLines()))
-            window.exec()
-            cursor = self.ui.textEdit.textCursor()
-            cursor.setPosition(0, QtGui.QTextCursor.MoveMode.MoveAnchor)
-            self.ui.textEdit.setTextCursor(cursor)
-            self.resetSelection()
+        window = FindWindow(text)
+        self.changeStyleModeFindWindow(window, self.settings["QSS-styles"])
+        if self._lang == "ru":
+            window.ui.label_2.setStyleSheet("font-size: 8pt;")
+        window.ui.previousButton.clicked.connect(lambda: self.viewText(window, 0))
+        window.ui.nextButton.clicked.connect(lambda: self.viewText(window, 1))
+        window.ui.resetReplaceButton.clicked.connect(lambda: self.replaceText(window.to_find, window.replace_with, 0))
+        self.closed.connect(window.exit)
+        window.replace.connect(lambda: self.replaceText(window.to_find, window.replace_with, 1))
+        window.new_text.connect(lambda: window.replaceStrings(self.getLines()))
+        window.exec()
+        cursor = self.ui.textEdit.textCursor()
+        cursor.setPosition(0, QtGui.QTextCursor.MoveMode.MoveAnchor)
+        self.ui.textEdit.setTextCursor(cursor)
+        self.resetSelection()
 
 
 if __name__ == '__main__':
-    # future()
+    future()
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
     sys.exit(app.exec())

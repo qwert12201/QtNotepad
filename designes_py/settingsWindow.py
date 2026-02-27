@@ -1,8 +1,10 @@
 import webbrowser
+import json
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
-from .modules import *
+from .modules import generate_basic_settings, make_exe, get_settings, updateFileConfig
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -194,7 +196,7 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "Version: Unknown"))
         self.label_3.setText(_translate("Dialog", "Config"))
         self.textEdit.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-        "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+        "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"  # flake8: noqa
         "p, li { white-space: pre-wrap; }\n"
         "hr { height: 1px; border-width: 0; }\n"
         "li.unchecked::marker { content: \"\\2610\"; }\n"
@@ -227,7 +229,6 @@ class SettingsWindow(QtWidgets.QDialog):
         self.setWindowTitle(self.tr("Settings"))
         self.setFixedSize(self.size())
         self.show()
-        self._changed = False
         self._save_seconds = 0
         self._clear_seconds = 0
 
@@ -248,8 +249,6 @@ class SettingsWindow(QtWidgets.QDialog):
 
         self.checkSettings()
         self.updateVisualConfig()
-        for box in tuple(self.settings_template.values())[:-2]:
-            box.checkStateChanged.connect(self.change)
 
         self.ui.exitButton.clicked.connect(self.exit)
         self.ui.resetButton.clicked.connect(self.generateBasicSettings)
@@ -280,25 +279,8 @@ class SettingsWindow(QtWidgets.QDialog):
         settings = get_settings()
         if not settings:
             settings = generate_basic_settings()
-            updateFileConfig()
+            updateFileConfig(settings)
         self.settings = settings
-
-    def change(self):
-        self._changed = True
-
-    def saveChanges(self) -> int:  # -1 - leave without save, 0 - not leave, 1 - leave with save
-        self.updateSettings()
-        if not self.settings["Confirmation"]:
-            return -1
-        elif self._changed:
-            choice = QtWidgets.QMessageBox.question(self, self.tr("Warning"), self.tr("Do you want to save the changes?"), QtWidgets.QMessageBox.StandardButton.Save | QtWidgets.QMessageBox.StandardButton.No | QtWidgets.QMessageBox.StandardButton.Cancel, QtWidgets.QMessageBox.StandardButton.Save)
-            if choice == QtWidgets.QMessageBox.StandardButton.Save:
-                self.applyChanges()
-                return 1
-            elif choice == QtWidgets.QMessageBox.StandardButton.Cancel:
-                return 0
-            elif choice == QtWidgets.QMessageBox.StandardButton.No:
-                return -1
 
     def getSeconds(self):
         a = self.ui.lineEdit.text()
@@ -320,12 +302,6 @@ class SettingsWindow(QtWidgets.QDialog):
                 self._clear_seconds = 0
         else:
             self._clear_seconds = 0
-
-    def closeEvent(self, a0):
-        code = self.saveChanges()
-        if code != 0:
-            return super().closeEvent(a0)
-        a0.ignore()
 
     def generateBasicSettings(self):
         self.settings = generate_basic_settings()
@@ -379,7 +355,6 @@ class SettingsWindow(QtWidgets.QDialog):
         updateFileConfig(temp)
         self.updateVisualConfig()
         self.settings_changed.emit()
-        self._changed = False
 
     def updateVisualConfig(self):
         settings = get_settings()

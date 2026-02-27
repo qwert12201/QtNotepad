@@ -7,6 +7,8 @@
     <file>png/save.png</file>
   </qresource>
   <qresource prefix="Features">
+    <file>png/uncaps.png</file>
+    <file>png/caps.png</file>
     <file>png/goto.png</file>
     <file>png/text.png</file>
   </qresource>

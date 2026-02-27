@@ -7,6 +7,8 @@
     <file>main_theme/save.png</file>
   </qresource>
   <qresource prefix="Features">
+    <file>main_theme/uncaps.png</file>
+    <file>main_theme/caps.png</file>
     <file>main_theme/goto.png</file>
     <file>main_theme/text.png</file>
   </qresource>

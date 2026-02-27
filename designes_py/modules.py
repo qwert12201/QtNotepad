@@ -13,16 +13,19 @@ file_list = [
 path = "\\".join(os.path.abspath(os.path.dirname(__file__)).split("\\")[:-1]) + "\\"
 
 if hasattr(sys, "_MEIPASS"):
-    path = os.path.join(sys._MEIPASS) + "\\"
+    path = os.path.join(sys._MEIPASS) + "\\"  # type: ignore
 
 def future():
-    shutil.rmtree("test")
-    os.mkdir("test")
-    for i in range(10):
-        file = f"test/test_{i}.txt"
-        with open(file, "w", encoding="utf-8"): 
-            pass
-    print("Nothing's gonna change my world")
+    try:
+        shutil.rmtree("test")
+        os.mkdir("test")
+        for i in range(10):
+            file = f"test/test_{i}.txt"
+            with open(file, "w", encoding="utf-8"):
+                pass
+        print("Nothing's gonna change my world")
+    except Exception:
+        pass
 
 def make_exe() -> bool:
     try:
@@ -34,7 +37,7 @@ def make_exe() -> bool:
             return False
     try:
         PyInstaller.__main__.run([
-            path + "main.py", "-w", "--onefile", "--add-data", path + "all.qss;.", "--add-data", 
+            path + "main.py", "-w", "--onefile", "--add-data", path + "all.qss;.", "--add-data",
             path + "settings.json;.", "--add-data", path + "designes_py;designes_py", "--add-data",
             path + "translations;translations"
         ])

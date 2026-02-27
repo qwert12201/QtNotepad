@@ -117,6 +117,10 @@ QMenuBar::item {
     border-radius: 1px;
 }
 
+QMenu::item:disabled {
+    color: gray;
+}
+
 QMenuBar::item:selected {
     background-color: white;
     border-radius: 3px;
@@ -150,14 +154,8 @@ QMenu::separator {
     margin: 3px;
 }
 
-QMenu::item:selected {
+QMenu::item::enabled:selected {
     background-color: white;
     border-radius: 2px;
     color: black;
-}
-
-QMenu::item:pressed {
-    background-color: gray;
-    border-radius: 3px;
-    color: white;
 }
